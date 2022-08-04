@@ -1,2 +1,6 @@
 # This is a generated file; do not edit or check into version control.
 flutter_blue=/Users/arpaap/development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_blue-0.8.0/
+permission_handler=/Users/arpaap/development/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-10.0.0/
+permission_handler_android=/Users/arpaap/development/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_android-10.0.0/
+permission_handler_apple=/Users/arpaap/development/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_apple-9.0.4/
+permission_handler_windows=/Users/arpaap/development/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_windows-0.1.0/

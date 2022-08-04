@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:robot_arm_controller/pages/hardware.dart';
+import 'package:robot_arm_controller/pages/home.dart';
+import 'package:robot_arm_controller/providers/connection.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  [Permission.bluetoothScan, Permission.bluetoothConnect].request();
+
   runApp(const MyApp());
 }
 
@@ -9,12 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '로봇팔 컨트롤러',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ListenableProvider(create: (_) => ConnectionProvider(null)),
+      ],
+      child: MaterialApp(
+        title: '로봇팔 컨트롤러',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(),
     );
   }
 }
@@ -27,13 +41,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final _pageController = PageController();
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -41,24 +50,44 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('로봇팔 컨트롤러'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+      body: SizedBox.expand(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          children: const [
+            HomePage(),
+            HardwarePage(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutExpo,
+          );
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '메인',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.memory),
+            label: '연결',
+          )
+        ],
       ),
     );
   }
